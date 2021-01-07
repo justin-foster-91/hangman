@@ -12,8 +12,10 @@ function startGame(){
 }
 
 function inputLetterGuess(letter){
-  lettersGuessed.push(letter.toLowerCase());
-  numberOfGuesses++;
+  if (!lettersGuessed.includes(letter)) {
+    lettersGuessed.push(letter.toLowerCase());
+    numberOfGuesses++;
+  }
 }
 
 function updateSecret(){
@@ -21,8 +23,8 @@ function updateSecret(){
 }
 
 function isGameOver(){
-  if (numberOfIncorrectGuesses() > 6) return 'Lose';
-  if (!secretTargetWord.includes('_')) return 'Win';
+  if (numberOfIncorrectGuesses() >= 6) return 'Lost';
+  if (!secretTargetWord.includes('_') && secretTargetWord.length) return 'Won';
 }
 
 function numberOfIncorrectGuesses(){
@@ -30,41 +32,48 @@ function numberOfIncorrectGuesses(){
 }
 
 function lossProgress(){
-  return Math.min(numberOfIncorrectGuesses() / 6, 1);
+  return `${Math.round((Math.min(numberOfIncorrectGuesses() / 6, 1)) * 100)}%`;
+}
+
+function restart(){
+  numberOfGuesses = 0;
+  targetWord = '';
+  secretTargetWord = '';
+  lettersGuessed = [];
+  startGame();
+  updateSecret();
 }
 
 function display(){
   console.log(secretTargetWord)
 }
 
-function gameLoop(){
-  startGame();
-  updateSecret();
-  while (!isGameOver()){
-    // Print game
-    display();
-    // Get input from user
-    const prompt = require('prompt-sync')();
-    let playerMove = prompt('What letter would you like to guess?');
-    if (playerMove === 'break') break;
+// function gameLoop(){
+//   startGame();
+//   updateSecret();
+//   while (!isGameOver()){
+//     // Print game
+//     display();
+//     // Get input from user
+//     const prompt = require('prompt-sync')();
+//     let playerMove = prompt('What letter would you like to guess?');
+//     if (playerMove === 'break') break;
 
-    inputLetterGuess(playerMove);
-    updateSecret();
-  }
-  display();
-  console.log(isGameOver());
-}
+//     inputLetterGuess(playerMove);
+//     updateSecret();
+//   }
+//   display();
+//   console.log(isGameOver());
+// }
 
-gameLoop();
+// gameLoop();
 
 function playGame(letter){
   inputLetterGuess(letter);
   updateSecret();
 }
 
-// Only count each letter once
+
 // Visual for progress bar
-// Display incorrect word bank
-// Restart button
-// title
-// instructions
+
+// center title in canvas

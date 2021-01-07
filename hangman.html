@@ -26,32 +26,56 @@
 
     function preload ()
     {
-      
+      this.load.image('refresh', 'assets/Button-Refresh-icon.png');
     }
 
     let hiddenWord = secretTargetWord;
     let gameOverMessage = '';
     let progressText = '';
+    let incorrectLetters = '';
+    let refreshSprite = undefined;
+    
   
     function create ()
     {
-      hiddenWord = this.add.text(50, 150, `${secretTargetWord}`, { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' }).setFontSize(100);
+      startGame()
+      updateSecret()
+      refreshSprite = this.add.sprite(850, 60, 'refresh').setInteractive().setScale(.3);
+      // refreshSprite.on('pointerdown', function (pointer) {
+      //   // gameOverMessage.setText(' ')
+      //   restart()
+      // });
+
+      hiddenWord = this.add.text(50, 250, `${secretTargetWord}`, { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' }).setFontSize(100);
       this.input.keyboard.on('keydown', keyEvent => playGame(keyEvent.key));
-      progressText = this.add.text(250, 50, lossProgress(), { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' }).setFontSize(100);;
+      progressText = this.add.text(250, 150, lossProgress(), { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' }).setFontSize(100);
+      incorrectLetters = this.add.text(50, 400, '', { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' }).setFontSize(75);
+      let gameTitle = this.add.text(0, 0, `Hangman`, { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' }).setFontSize(75);
+      gameTitle.setPosition(this.cameras.main.centerX - gameTitle.width /2 , 0)
+      gameOverMessage = this.add.text(550, 250, ``, { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' })
+          .setFontSize(100)
+          .setColor('#FF0000');
+      
+      console.log(gameTitle.width)
     }
   
     function update() 
     {
       // Win or Lose should pop up after game is over
       if (isGameOver()) {
-        gameOverMessage = this.add.text(100, 250, `${isGameOver()}`, { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' })
+        gameOverMessage.setText(`You ${isGameOver()}!`, { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' })
           .setFontSize(100)
           .setColor('#FF0000');
       }
       // addListener(onkeypress, inputLetterGuess(keypress))
       hiddenWord.setText(secretTargetWord);
       progressText.setText(lossProgress())
+      incorrectLetters.setText(lettersGuessed.filter(char => !targetWord.includes(char)).join(' '))
       // console.log(lossProgress());
+      refreshSprite.on('pointerdown', function (pointer) {
+        gameOverMessage.setText(' ')
+        restart()
+      });
     }
   </script>
 </body>
